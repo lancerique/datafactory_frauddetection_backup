@@ -1,0 +1,32 @@
+{
+	"name": "df_inpatient",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "src_inpatient",
+						"type": "DatasetReference"
+					},
+					"name": "srcinpatient"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "tgt_inpatient",
+						"type": "DatasetReference"
+					},
+					"name": "tginpatient"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DerivedInpatient"
+				}
+			],
+			"script": "parameters{\n\tprocessDate as string (toString(currentUTC(),'yyyy-MM-dd'))\n}\nsource(output(\n\t\tBeneID as string,\n\t\tClaimID as string,\n\t\tClaimStartDt as date 'yyyy-MM-dd',\n\t\tClaimEndDt as date 'yyyy-MM-dd',\n\t\tProvider as string,\n\t\tInscClaimAmtReimbursed as string,\n\t\tAttendingPhysician as string,\n\t\tOperatingPhysician as string,\n\t\tOtherPhysician as string,\n\t\tAdmissionDt as date 'yyyy-MM-dd',\n\t\tClmAdmitDiagnosisCode as string,\n\t\tDeductibleAmtPaid as string,\n\t\tDischargeDt as date 'yyyy-MM-dd',\n\t\tDiagnosisGroupCode as string,\n\t\tClmDiagnosisCode_1 as string,\n\t\tClmDiagnosisCode_2 as string,\n\t\tClmDiagnosisCode_3 as string,\n\t\tClmDiagnosisCode_4 as string,\n\t\tClmDiagnosisCode_5 as string,\n\t\tClmDiagnosisCode_6 as string,\n\t\tClmDiagnosisCode_7 as string,\n\t\tClmDiagnosisCode_8 as string,\n\t\tClmDiagnosisCode_9 as string,\n\t\tClmDiagnosisCode_10 as string,\n\t\tClmProcedureCode_1 as string,\n\t\tClmProcedureCode_2 as string,\n\t\tClmProcedureCode_3 as string,\n\t\tClmProcedureCode_4 as string,\n\t\tClmProcedureCode_5 as string,\n\t\tClmProcedureCode_6 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\twildcardPaths:[(concat('fdengine/dev/fdsource/inpatient/',$processDate,'/*.csv'))]) ~> srcinpatient\nsrcinpatient derive(InscClaimAmtReimbursed = trim(iif(InscClaimAmtReimbursed == 'NA', '0', InscClaimAmtReimbursed),' '),\n\t\tDeductibleAmtPaid = trim(iif(DeductibleAmtPaid=='NA', '0', DeductibleAmtPaid),''),\n\t\tAttendingPhysician = trim(iif(AttendingPhysician=='NA', '', AttendingPhysician),''),\n\t\tOperatingPhysician = trim(iif(OperatingPhysician=='NA', '', OperatingPhysician),''),\n\t\tOtherPhysician = trim(iif(OtherPhysician=='NA', '', OtherPhysician),''),\n\t\tDiagnosisGroupCode = trim(iif(DiagnosisGroupCode=='NA', '', DiagnosisGroupCode),''),\n\t\tClmDiagnosisCode_1 = trim(iif(ClmDiagnosisCode_1=='NA', '', ClmDiagnosisCode_1),''),\n\t\tClmDiagnosisCode_2 = trim(iif(ClmDiagnosisCode_2=='NA', '', ClmDiagnosisCode_2),''),\n\t\tClmDiagnosisCode_3 = trim(iif(ClmDiagnosisCode_3=='NA', '', ClmDiagnosisCode_3),''),\n\t\tClmDiagnosisCode_4 = trim(iif(ClmDiagnosisCode_4=='NA', '', ClmDiagnosisCode_4),''),\n\t\tClmDiagnosisCode_5 = trim(iif(ClmDiagnosisCode_5=='NA', '', ClmDiagnosisCode_5),''),\n\t\tClmDiagnosisCode_6 = trim(iif(ClmDiagnosisCode_6=='NA', '', ClmDiagnosisCode_6),''),\n\t\tClmDiagnosisCode_7 = trim(iif(ClmDiagnosisCode_7=='NA', '', ClmDiagnosisCode_7),''),\n\t\tClmDiagnosisCode_8 = trim(iif(ClmDiagnosisCode_8=='NA', '', ClmDiagnosisCode_8),''),\n\t\tClmDiagnosisCode_9 = trim(iif(ClmDiagnosisCode_9=='NA', '', ClmDiagnosisCode_9),''),\n\t\tClmDiagnosisCode_10 = trim(iif(ClmDiagnosisCode_10=='NA', '', ClmDiagnosisCode_10),''),\n\t\tClmProcedureCode_1 = trim(iif(ClmProcedureCode_1=='NA', '', ClmProcedureCode_1),''),\n\t\tClmProcedureCode_2 = trim(iif(ClmProcedureCode_2=='NA', '', ClmProcedureCode_2),''),\n\t\tClmProcedureCode_3 = trim(iif(ClmProcedureCode_3=='NA', '', ClmProcedureCode_3),''),\n\t\tClmProcedureCode_4 = trim(iif(ClmProcedureCode_4=='NA', '', ClmProcedureCode_4),''),\n\t\tClmProcedureCode_5 = trim(iif(ClmProcedureCode_5=='NA', '', ClmProcedureCode_5),''),\n\t\tClmProcedureCode_6 = trim(iif(ClmProcedureCode_6=='NA', '', ClmProcedureCode_6),'')) ~> DerivedInpatient\nDerivedInpatient sink(input(\n\t\tBeneID as string,\n\t\tClaimID as string,\n\t\tClaimStartDt as string,\n\t\tClaimEndDt as string,\n\t\tProvider as string,\n\t\tInscClaimAmtReimbursed as string,\n\t\tAttendingPhysician as string,\n\t\tOperatingPhysician as string,\n\t\tOtherPhysician as string,\n\t\tAdmissionDt as string,\n\t\tClmAdmitDiagnosisCode as string,\n\t\tDeductibleAmtPaid as string,\n\t\tDischargeDt as string,\n\t\tDiagnosisGroupCode as string,\n\t\tClmDiagnosisCode_1 as string,\n\t\tClmDiagnosisCode_2 as string,\n\t\tClmDiagnosisCode_3 as string,\n\t\tClmDiagnosisCode_4 as string,\n\t\tClmDiagnosisCode_5 as string,\n\t\tClmDiagnosisCode_6 as string,\n\t\tClmDiagnosisCode_7 as string,\n\t\tClmDiagnosisCode_8 as string,\n\t\tClmDiagnosisCode_9 as string,\n\t\tClmDiagnosisCode_10 as string,\n\t\tClmProcedureCode_1 as string,\n\t\tClmProcedureCode_2 as string,\n\t\tClmProcedureCode_3 as string,\n\t\tClmProcedureCode_4 as string,\n\t\tClmProcedureCode_5 as string,\n\t\tClmProcedureCode_6 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[(concat('fdengine/dev/fdtarget/inpatient/',$processDate,'/Inpatient_',$processDate,'.csv'))],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> tginpatient"
+		}
+	}
+}

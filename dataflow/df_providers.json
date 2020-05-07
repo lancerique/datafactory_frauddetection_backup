@@ -1,0 +1,28 @@
+{
+	"name": "df_providers",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "src_providers",
+						"type": "DatasetReference"
+					},
+					"name": "srcprovider"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "tgt_providers",
+						"type": "DatasetReference"
+					},
+					"name": "tgtprovider"
+				}
+			],
+			"transformations": [],
+			"script": "parameters{\n\tprocessDate as string (toString(currentUTC(),'yyyy-MM-dd'))\n}\nsource(output(\n\t\tProvider as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\twildcardPaths:[(concat('fdengine/dev/fdsource/providers/',$processDate,'/*.csv')\r\n)]) ~> srcprovider\nsrcprovider sink(input(\n\t\tProvider as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[(concat('fdengine/dev/fdtarget/providers/',$processDate,'/Providers_',$processDate,'.csv'))],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> tgtprovider"
+		}
+	}
+}

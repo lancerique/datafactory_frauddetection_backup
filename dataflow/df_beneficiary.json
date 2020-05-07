@@ -1,0 +1,32 @@
+{
+	"name": "df_beneficiary",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "src_beneficiary",
+						"type": "DatasetReference"
+					},
+					"name": "srcbeneficiary"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "tgt_beneficiary",
+						"type": "DatasetReference"
+					},
+					"name": "tgtbeneficiary"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DerivedBeneficiary"
+				}
+			],
+			"script": "parameters{\n\tprocessDate as string (toString(currentUTC(),'yyyy-MM-dd'))\n}\nsource(output(\n\t\tBeneID as string,\n\t\tDOB as date 'yyyy-MM-dd',\n\t\tDOD as string,\n\t\tGender as integer '000',\n\t\tRace as integer '000',\n\t\tRenalDiseaseIndicator as boolean,\n\t\tState as integer '000',\n\t\tCounty as integer '000',\n\t\tNoOfMonths_PartACov as integer '000',\n\t\tNoOfMonths_PartBCov as integer '000',\n\t\tChronicCond_Alzheimer as integer '000',\n\t\tChronicCond_Heartfailure as integer '000',\n\t\tChronicCond_KidneyDisease as integer '000',\n\t\tChronicCond_Cancer as integer '000',\n\t\tChronicCond_ObstrPulmonary as integer '000',\n\t\tChronicCond_Depression as integer '000',\n\t\tChronicCond_Diabetes as integer '000',\n\t\tChronicCond_IschemicHeart as integer '000',\n\t\tChronicCond_Osteoporasis as integer '000',\n\t\tChronicCond_rheumatoidarthritis as integer '000',\n\t\tChronicCond_stroke as integer '000',\n\t\tIPAnnualReimbursementAmt as string,\n\t\tIPAnnualDeductibleAmt as string,\n\t\tOPAnnualReimbursementAmt as string,\n\t\tOPAnnualDeductibleAmt as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\twildcardPaths:[(concat('fdengine/dev/fdsource/beneficiary/',$processDate,'/*.csv'))]) ~> srcbeneficiary\nsrcbeneficiary derive(DOD = iif(DOD=='NA','',DOD),\n\t\tIPAnnualReimbursementAmt = iif(IPAnnualReimbursementAmt=='NA', '0', IPAnnualReimbursementAmt),\n\t\tIPAnnualDeductibleAmt = iif(IPAnnualDeductibleAmt=='NA', '0', IPAnnualDeductibleAmt),\n\t\tOPAnnualReimbursementAmt = iif(OPAnnualReimbursementAmt=='NA', '0', OPAnnualReimbursementAmt),\n\t\tOPAnnualDeductibleAmt = iif(OPAnnualDeductibleAmt=='NA', '0', OPAnnualDeductibleAmt)) ~> DerivedBeneficiary\nDerivedBeneficiary sink(input(\n\t\tBeneID as string,\n\t\tDOB as string,\n\t\tDOD as string,\n\t\tGender as string,\n\t\tRace as string,\n\t\tRenalDiseaseIndicator as string,\n\t\tState as string,\n\t\tCounty as string,\n\t\tNoOfMonths_PartACov as string,\n\t\tNoOfMonths_PartBCov as string,\n\t\tChronicCond_Alzheimer as string,\n\t\tChronicCond_Heartfailure as string,\n\t\tChronicCond_KidneyDisease as string,\n\t\tChronicCond_Cancer as string,\n\t\tChronicCond_ObstrPulmonary as string,\n\t\tChronicCond_Depression as string,\n\t\tChronicCond_Diabetes as string,\n\t\tChronicCond_IschemicHeart as string,\n\t\tChronicCond_Osteoporasis as string,\n\t\tChronicCond_rheumatoidarthritis as string,\n\t\tChronicCond_stroke as string,\n\t\tIPAnnualReimbursementAmt as string,\n\t\tIPAnnualDeductibleAmt as string,\n\t\tOPAnnualReimbursementAmt as string,\n\t\tOPAnnualDeductibleAmt as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[(concat('fdengine/dev/fdtarget/beneficiary/',$processDate,'/Beneficiary_',$processDate,'.csv'))],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> tgtbeneficiary"
+		}
+	}
+}

@@ -1,0 +1,216 @@
+{
+	"name": "fraudDetectionPipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "setProcessDate",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "processDate",
+					"value": {
+						"value": "@formatDateTime(utcnow(),'yyyy-MM-dd')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "fd_beneficiary",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "setProcessDate",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "fd_beneficiary",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"processDate": {
+							"value": "@variables('processDate')",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "fd_inpatient",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "setProcessDate",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "fd_inpatient",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"processDate": {
+							"value": "@variables('processDate')",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "fd_outpatient",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "setProcessDate",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "fd_outpatient",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"processDate": {
+							"value": "@variables('processDate')",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "proc_inpatient_fact_table",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "fd_inpatient",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "fd_outpatient",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[edp_dev].[proc_fact_clmdiagnosis_refresh]"
+				},
+				"linkedServiceName": {
+					"referenceName": "conn_synapse",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Providers",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "setProcessDate",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Providers",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"processDate": {
+							"value": "@variables('processDate')",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "fdEngine",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "setProcessDate",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "proc_inpatient_fact_table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Providers",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "fd_beneficiary",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/akapsikar@parkar.consulting/medical-provider-fraud-detection",
+					"baseParameters": {
+						"processDate": {
+							"value": "@variables('processDate')",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "DB_fraudetection",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"variables": {
+			"processDate": {
+				"type": "String",
+				"defaultValue": "toString(currentUTC(),'yyyy-MM-dd')"
+			}
+		},
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

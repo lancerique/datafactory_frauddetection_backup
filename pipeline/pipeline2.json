@@ -1,0 +1,41 @@
+{
+	"name": "pipeline2",
+	"properties": {
+		"activities": [
+			{
+				"name": "Notebook1",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/akapsikar@parkar.consulting/medical-provider-fraud-detection",
+					"baseParameters": {
+						"processDate": {
+							"value": "@formformatDateTime(utcnow(),'yyyy-MM-dd')",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "DB_fraudetection",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"processDate": {
+				"type": "string",
+				"defaultValue": "@formatDateTime(utcnow(),\"yyyy-MM-dd\")"
+			}
+		},
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,28 @@
+{
+	"name": "df_beneficiary_StgMng",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "src_beneficiary_stgTbl",
+						"type": "DatasetReference"
+					},
+					"name": "srcBeneficiaryStgTbl"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "trg_beneficiary_mngTbl",
+						"type": "DatasetReference"
+					},
+					"name": "trgBeneficiaryTrgTbl"
+				}
+			],
+			"transformations": [],
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select stg.* from   \\n  edp_dev_stg.testbeneficiary_stg stg\\n left join edp_dev.testbeneficiary mng\\n on stg.beneid = mng.beneid\\n where mng.beneid is  null',\n\tformat: 'query',\n\tstaged: false) ~> srcBeneficiaryStgTbl\nsrcBeneficiaryStgTbl sink(input(\n\t\tbeneid as string,\n\t\tdob as timestamp,\n\t\tdod as string,\n\t\tgender as integer,\n\t\trace as integer,\n\t\trenaldiseaseindicator as string,\n\t\tstate as integer,\n\t\tcounty as integer,\n\t\tnoofmonths_partacov as integer,\n\t\tnoofmonths_partbcov as integer,\n\t\tchroniccond_alzheimer as integer,\n\t\tchroniccond_heartfailure as integer,\n\t\tchroniccond_kidneydisease as integer,\n\t\tchroniccond_cancer as integer,\n\t\tchroniccond_obstrpulmonary as integer,\n\t\tchroniccond_depression as integer,\n\t\tchroniccond_diabetes as integer,\n\t\tchroniccond_ischemicheart as integer,\n\t\tchroniccond_osteoporasis as integer,\n\t\tchroniccond_rheumatoidarthritis as integer,\n\t\tchroniccond_stroke as integer,\n\t\tipannualreimbursementamt as integer,\n\t\tipannualdeductibleamt as integer,\n\t\topannualreimbursementamt as integer,\n\t\topannualdeductibleamt as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tstaged: false,\n\tbatchSize: 5000,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> trgBeneficiaryTrgTbl"
+		}
+	}
+}

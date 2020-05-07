@@ -1,0 +1,28 @@
+{
+	"name": "HS_Dynamic_Ingestion",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Src_Test_HS",
+						"type": "DatasetReference"
+					},
+					"name": "InPatientInput"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "tgt_inpatient",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"script": "source(output(\n\t\tBeneID as string,\n\t\tClaimID as string,\n\t\tClaimStartDt as string,\n\t\tClaimEndDt as string,\n\t\tProvider as string,\n\t\tInscClaimAmtReimbursed as string,\n\t\tAttendingPhysician as string,\n\t\tOperatingPhysician as string,\n\t\tOtherPhysician as string,\n\t\tAdmissionDt as string,\n\t\tClmAdmitDiagnosisCode as string,\n\t\tDeductibleAmtPaid as string,\n\t\tDischargeDt as string,\n\t\tDiagnosisGroupCode as string,\n\t\tClmDiagnosisCode_1 as string,\n\t\tClmDiagnosisCode_2 as string,\n\t\tClmDiagnosisCode_3 as string,\n\t\tClmDiagnosisCode_4 as string,\n\t\tClmDiagnosisCode_5 as string,\n\t\tClmDiagnosisCode_6 as string,\n\t\tClmDiagnosisCode_7 as string,\n\t\tClmDiagnosisCode_8 as string,\n\t\tClmDiagnosisCode_9 as string,\n\t\tClmDiagnosisCode_10 as string,\n\t\tClmProcedureCode_1 as string,\n\t\tClmProcedureCode_2 as string,\n\t\tClmProcedureCode_3 as string,\n\t\tClmProcedureCode_4 as string,\n\t\tClmProcedureCode_5 as string,\n\t\tClmProcedureCode_6 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\twildcardPaths:[(concat('fdengine/dev/fdsource/inpatient/',toString(currentUTC(),'yyyy-MM-dd'),'/*.csv'))]) ~> InPatientInput\nInPatientInput sink(input(\n\t\tBeneID as string,\n\t\tClaimID as string,\n\t\tClaimStartDt as string,\n\t\tClaimEndDt as string,\n\t\tProvider as string,\n\t\tInscClaimAmtReimbursed as string,\n\t\tAttendingPhysician as string,\n\t\tOperatingPhysician as string,\n\t\tOtherPhysician as string,\n\t\tAdmissionDt as string,\n\t\tClmAdmitDiagnosisCode as string,\n\t\tDeductibleAmtPaid as string,\n\t\tDischargeDt as string,\n\t\tDiagnosisGroupCode as string,\n\t\tClmDiagnosisCode_1 as string,\n\t\tClmDiagnosisCode_2 as string,\n\t\tClmDiagnosisCode_3 as string,\n\t\tClmDiagnosisCode_4 as string,\n\t\tClmDiagnosisCode_5 as string,\n\t\tClmDiagnosisCode_6 as string,\n\t\tClmDiagnosisCode_7 as string,\n\t\tClmDiagnosisCode_8 as string,\n\t\tClmDiagnosisCode_9 as string,\n\t\tClmDiagnosisCode_10 as string,\n\t\tClmProcedureCode_1 as string,\n\t\tClmProcedureCode_2 as string,\n\t\tClmProcedureCode_3 as string,\n\t\tClmProcedureCode_4 as string,\n\t\tClmProcedureCode_5 as string,\n\t\tClmProcedureCode_6 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+		}
+	}
+}

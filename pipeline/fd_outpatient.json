@@ -1,0 +1,71 @@
+{
+	"name": "fd_outpatient",
+	"properties": {
+		"activities": [
+			{
+				"name": "df_outpatient",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_outpatient",
+						"type": "DataFlowReference",
+						"parameters": {
+							"processDate": {
+								"value": "'@{pipeline().parameters.processDate}'",
+								"type": "Expression"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					}
+				}
+			},
+			{
+				"name": "proc_test_outpatient",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "df_outpatient",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[edp_dev].[proc_test_outpatient]"
+				},
+				"linkedServiceName": {
+					"referenceName": "conn_synapse",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"processDate": {
+				"type": "string",
+				"defaultValue": "toString(currentUTC(),'yyyy-MM-dd')"
+			}
+		},
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

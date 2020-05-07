@@ -1,0 +1,17 @@
+{
+	"name": "trg_1",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Hour",
+				"interval": 3,
+				"startTime": "2020-03-17T11:55:00Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}

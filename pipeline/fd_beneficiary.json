@@ -1,0 +1,71 @@
+{
+	"name": "fd_beneficiary",
+	"properties": {
+		"activities": [
+			{
+				"name": "df_beneficiary",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_beneficiary",
+						"type": "DataFlowReference",
+						"parameters": {
+							"processDate": {
+								"value": "'@{pipeline().parameters.processDate}'",
+								"type": "Expression"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					}
+				}
+			},
+			{
+				"name": "proc_test_beneficiary",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "df_beneficiary",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[edp_dev].[proc_test_beneficiary]"
+				},
+				"linkedServiceName": {
+					"referenceName": "conn_synapse",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"processDate": {
+				"type": "string",
+				"defaultValue": "toString(currentUTC(),'yyyy-MM-dd')"
+			}
+		},
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

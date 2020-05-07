@@ -1,0 +1,168 @@
+{
+	"name": "SourceDataset_psa",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "conn_synapse",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "beneid",
+				"type": "varchar",
+				"precision": 255,
+				"scale": 255
+			},
+			{
+				"name": "dob",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "dod",
+				"type": "varchar",
+				"precision": 255,
+				"scale": 255
+			},
+			{
+				"name": "gender",
+				"type": "tinyint",
+				"precision": 3,
+				"scale": 255
+			},
+			{
+				"name": "race",
+				"type": "tinyint",
+				"precision": 3,
+				"scale": 255
+			},
+			{
+				"name": "renaldiseaseindicator",
+				"type": "varchar",
+				"precision": 255,
+				"scale": 255
+			},
+			{
+				"name": "state",
+				"type": "smallint",
+				"precision": 5,
+				"scale": 255
+			},
+			{
+				"name": "county",
+				"type": "smallint",
+				"precision": 5,
+				"scale": 255
+			},
+			{
+				"name": "noofmonths_partacov",
+				"type": "smallint",
+				"precision": 5,
+				"scale": 255
+			},
+			{
+				"name": "noofmonths_partbcov",
+				"type": "smallint",
+				"precision": 5,
+				"scale": 255
+			},
+			{
+				"name": "chroniccond_alzheimer",
+				"type": "tinyint",
+				"precision": 3,
+				"scale": 255
+			},
+			{
+				"name": "chroniccond_heartfailure",
+				"type": "tinyint",
+				"precision": 3,
+				"scale": 255
+			},
+			{
+				"name": "chroniccond_kidneydisease",
+				"type": "tinyint",
+				"precision": 3,
+				"scale": 255
+			},
+			{
+				"name": "chroniccond_cancer",
+				"type": "tinyint",
+				"precision": 3,
+				"scale": 255
+			},
+			{
+				"name": "chroniccond_obstrpulmonary",
+				"type": "tinyint",
+				"precision": 3,
+				"scale": 255
+			},
+			{
+				"name": "chroniccond_depression",
+				"type": "tinyint",
+				"precision": 3,
+				"scale": 255
+			},
+			{
+				"name": "chroniccond_diabetes",
+				"type": "tinyint",
+				"precision": 3,
+				"scale": 255
+			},
+			{
+				"name": "chroniccond_ischemicheart",
+				"type": "tinyint",
+				"precision": 3,
+				"scale": 255
+			},
+			{
+				"name": "chroniccond_osteoporasis",
+				"type": "tinyint",
+				"precision": 3,
+				"scale": 255
+			},
+			{
+				"name": "chroniccond_rheumatoidarthritis",
+				"type": "tinyint",
+				"precision": 3,
+				"scale": 255
+			},
+			{
+				"name": "chroniccond_stroke",
+				"type": "tinyint",
+				"precision": 3,
+				"scale": 255
+			},
+			{
+				"name": "ipannualreimbursementamt",
+				"type": "int",
+				"precision": 10,
+				"scale": 255
+			},
+			{
+				"name": "ipannualdeductibleamt",
+				"type": "int",
+				"precision": 10,
+				"scale": 255
+			},
+			{
+				"name": "opannualreimbursementamt",
+				"type": "int",
+				"precision": 10,
+				"scale": 255
+			},
+			{
+				"name": "opannualdeductibleamt",
+				"type": "int",
+				"precision": 10,
+				"scale": 255
+			}
+		],
+		"typeProperties": {
+			"schema": "edp_dev_stg",
+			"table": "testbeneficiary_stg"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

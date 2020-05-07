@@ -1,0 +1,58 @@
+{
+	"name": "cp_beneficiary_stg",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy_psa",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "edp_dev_stg.testbeneficiary_stg"
+					},
+					{
+						"name": "Destination",
+						"value": "edp_dev.testbeneficiary"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "SqlDWSource",
+						"queryTimeout": "00:15:00",
+						"isolationLevel": "ReadCommitted"
+					},
+					"sink": {
+						"type": "SqlDWSink",
+						"writeBatchSize": 5000,
+						"preCopyScript": "insert into edp_dev.testbeneficiary  select * from \n (select stg.* from   \n  edp_dev_stg.testbeneficiary_stg stg\n left join edp_dev.testbeneficiary mng\n on stg.beneid = mng.beneid\n where mng.beneid is  null) newrec",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"parallelCopies": 2
+				},
+				"inputs": [
+					{
+						"referenceName": "SourceDataset_psa",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DestinationDataset_psa",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
